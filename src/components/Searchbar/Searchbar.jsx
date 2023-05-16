@@ -1,21 +1,28 @@
 import { Component } from "react";
-// import { ImSearch } from "react-icons/im";
+import { ImSearch } from "react-icons/im";
+import Notiflix from 'notiflix';
 import css from './Searchbar.module.css';
 
 class Searchbar extends Component {
     state = {
-        query: ''
+        searchText: ''
     };
 
     handleChange = (e) => {
         const { value } = e.target;
-        this.setState({ query: value });
+        this.setState({ searchText: value.toLowerCase() });
         // console.log(this.state);
     };
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.onSubmit(this.state.query)
+
+        if (this.state.searchText.trim() === '') {
+            Notiflix.Notify.info('Please enter something!');
+            return;
+        }
+        this.props.onSubmit(this.state.searchText);
+        this.setState({ searchText: '' })
     };
 
     render() {
@@ -23,13 +30,13 @@ class Searchbar extends Component {
             <header className={css.searchbar}>
                 <form className={css.form} onSubmit={this.handleSubmit}>
                     <button type="submit" className={css.button}>
-                        <span className={css.buttonLabel}>Search</span>
+                        <ImSearch/>
                     </button>
     
                     <input
                         className={css.input}
                         type="text"
-                        value={this.state.query}
+                        value={this.state.searchText}
                         onChange={this.handleChange}
                         autoComplete="off"
                         autoFocus

@@ -14,11 +14,11 @@ class App extends Component {
     this.setState({ searchText })
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal
-    }))
-  };
+  // toggleModal = () => {
+  //   this.setState(({ showModal }) => ({
+  //     showModal: !showModal
+  //   }))
+  // };
 
   render() {
     const { searchText, showModal } = this.state;
