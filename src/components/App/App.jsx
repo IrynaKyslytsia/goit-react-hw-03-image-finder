@@ -7,28 +7,30 @@ import css from './App.module.css'
 class App extends Component {
   state = {
     searchText: '',
-    showModal: false
+    isShowModal: false,
+    modalImg: ''
   };
 
   handleSearch = (searchText) => {
     this.setState({ searchText })
   };
 
-  // toggleModal = () => {
-  //   this.setState(({ showModal }) => ({
-  //     showModal: !showModal
-  //   }))
-  // };
+  showModal = (modalImg) => {
+    this.setState({ isShowModal: true, modalImg })
+  };
+
+  closeModal = () => {
+    this.setState({ isShowModal: false })
+  };
 
   render() {
-    const { searchText, showModal } = this.state;
+    const { searchText, isShowModal, modalImg } = this.state;
     return (
       <div className={css.app}>
         <Searchbar onSubmit={this.handleSearch} />
-        <ImageGallery searchText={searchText} />
-        {showModal && <Modal />}
-       
-      </div>
+        <ImageGallery searchText={searchText} showModal={this.showModal} />
+        {isShowModal && <Modal modalImg={modalImg} onClose={this.closeModal} />}
+       </div>
     )
   };
 

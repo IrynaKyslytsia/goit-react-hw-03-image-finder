@@ -1,4 +1,5 @@
 import { Component } from "react";
+import PropTypes from 'prop-types';
 import Notiflix from 'notiflix';
 import { nanoid } from 'nanoid';
 import { getImages } from "services/getImages";
@@ -12,19 +13,16 @@ class ImageGallery extends Component {
         images: [],
         page: 1,
         error: null,
-        status: 'idle'
+        status: 'idle',
     };
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.searchText !== this.props.searchText
             || prevState.page !== this.state.page) {
-            // console.log(prevProps.searchText)
-            // console.log(this.props.searchText)
-            // console.log('изменился запрос')
-
+            
              this.setState({ status: 'pending' });
 
-        getImages(this.props.searchText)
+        getImages(this.props.searchText, this.state.page)
             .then(data => {
                 if (data.hits.length === 0) {
                     Notiflix.Notify.failure('There are no images...');
@@ -47,7 +45,7 @@ class ImageGallery extends Component {
         this.setState(prevState => {
             return { page: prevState.page + 1 }
         })
-    }
+    };
 
     render() {
         const { images, error, status } = this.state
@@ -67,11 +65,13 @@ class ImageGallery extends Component {
         if (status === 'resolved') {
             return (
                 <ul className={css.imageGallery}>
-                    {images.map((image) => {
+                    {images.map(({ webformatURL, largeImageURL, tags }) => {
                         return <ImageGalleryItem
                                 key={nanoid()}
-                                description={image.tags}
-                                image={image}
+                                description={tags}
+                                webformatURL={webformatURL}
+                                largeImageURL={largeImageURL}
+                                showModal={this.props.showModal}    
                             />
                     })}
                 {images.length > 0 && <Button onClick={this.onLoadMore} />}
@@ -81,3 +81,8 @@ class ImageGallery extends Component {
     };
 
 export default ImageGallery;
+
+ImageGallery.propType = {
+    searchText: PropTypes.string.isRequired,
+    showModal: PropTypes.func.isRequired,
+};
