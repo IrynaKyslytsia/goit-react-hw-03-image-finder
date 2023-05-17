@@ -78,7 +78,12 @@ class App extends Component {
     }
 
     if (status === 'pending') {
-        return <Loader />
+      return (
+        <>
+        <Searchbar onSubmit={this.handleSearch} onClear={this.clearImageGallery} />
+        <Loader />
+        </>
+      )
     }
     
     if (status === 'rejected') {
