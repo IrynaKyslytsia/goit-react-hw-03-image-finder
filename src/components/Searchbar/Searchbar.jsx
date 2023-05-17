@@ -12,7 +12,6 @@ class Searchbar extends Component {
     handleChange = (e) => {
         const { value } = e.target;
         this.setState({ searchText: value.toLowerCase() });
-        // console.log(this.state);
     };
 
     handleSubmit = (e) => {
@@ -23,13 +22,14 @@ class Searchbar extends Component {
             return;
         }
         this.props.onSubmit(this.state.searchText);
+        this.props.onClear();
         this.setState({ searchText: '' })
     };
 
     render() {
         return (
             <header className={css.searchbar}>
-                <form className={css.form} onSubmit={this.handleSubmit}>
+                <form className={css.form} onSubmit={this.handleSubmit} >
                     <button type="submit" className={css.button}>
                         <ImSearch/>
                     </button>
@@ -53,4 +53,5 @@ export default Searchbar;
 
 Searchbar.propType = {
     onSubmit: PropTypes.func.isRequired,
+    onClear: PropTypes.func.isRequired,
 };
