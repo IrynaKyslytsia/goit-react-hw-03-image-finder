@@ -4,8 +4,8 @@ import css from './Loader.module.css'
 const Loader = () => {
     return (
         <Oval
-  height={160}
-  width={160}
+  height={100}
+  width={100}
   color="#3f51b5"
   wrapperStyle={{}}
   wrapperClass={css.loader}

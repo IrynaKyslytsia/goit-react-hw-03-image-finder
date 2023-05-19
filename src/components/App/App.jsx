@@ -89,7 +89,11 @@ class App extends Component {
             onClear={this.clearImageGallery}
             resetPage={page}
             resetGallery={images}/>
-        <Loader />
+          <Loader />
+          <ImageGallery
+            images={images}
+            showModal={this.showModal} />
+          {images.length > 0 && <Button onClick={this.onLoadMore} />}
         </>
       )
     }
