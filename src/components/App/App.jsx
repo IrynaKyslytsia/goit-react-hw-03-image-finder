@@ -15,31 +15,30 @@ class App extends Component {
     page: 1,
     error: null,
     status: 'idle',
+    isLoading: false,
     isShowModal: false,
     modalImg: ''
   };
 
-   componentDidUpdate(prevProps, prevState) {
-        if (prevState.searchText !== this.state.searchText
-            || prevState.page !== this.state.page) {
+  componentDidUpdate(prevProps, prevState) {
+    const { searchText, page } = this.state;
+        if (prevState.searchText !== searchText
+            || prevState.page !== page) {
             
-             this.setState({ status: 'pending' });
+             this.setState({ isLoading: true });
 
-        getImages(this.state.searchText, this.state.page)
+        getImages(searchText, page)
             .then(data => {
                 if (data.hits.length === 0) {
                     Notiflix.Notify.failure('There are no images...');
                 }
 
                 return this.setState(prevState => ({
-            images:
-              this.state.page === 1
-                ? data.hits
-                : [...prevState.images, ...data.hits],
-            status: 'resolved',
+                  images: [...prevState.images, ...data.hits] ,
           }));
             })
-            .catch(error => this.setState({ error, status: 'rejected' }))
+            .catch(error => this.setState({ error }))
+            .finally(() => {this.setState({ isLoading: false })})
         }
   };
   
@@ -49,9 +48,13 @@ class App extends Component {
         })
     };
 
-  handleSearch = (searchText) => {
-    this.setState({ searchText })
-  };
+  handleFormSubmit = (searchText) => {
+    this.setState({
+      searchText,
+      images: [],
+      page: 1,      
+    })
+  }
 
   showModal = (modalImg) => {
     this.setState({ isShowModal: true, modalImg })
@@ -66,59 +69,27 @@ class App extends Component {
   };
 
   render() {
-    const { images, page, isShowModal, modalImg, error, status } = this.state;
+    const { images, page, isShowModal, modalImg, error, isLoading } = this.state;
 
-    if (status === 'idle') {
-      return (
-        <>
-          <Searchbar
-            onSubmit={this.handleSearch}
-            onClear={this.clearImageGallery}
-            resetPage={page}
-            resetGallery={images} />
-          <h1>Enter something</h1>
-        </>
-      )      
-    }
-
-    if (status === 'pending') {
-      return (
-        <>
-          <Searchbar
-            onSubmit={this.handleSearch}
-            onClear={this.clearImageGallery}
-            resetPage={page}
-            resetGallery={images}/>
-          <Loader />
-          <ImageGallery
-            images={images}
-            showModal={this.showModal} />
-          {images.length > 0 && <Button onClick={this.onLoadMore} />}
-        </>
-      )
-    }
     
-    if (status === 'rejected') {
-        return <div>{ error.message }</div>
-    }
-    
-    if (status === 'resolved') {
-        return (
+    return (
       <div className={css.app}>
-            <Searchbar
-              onSubmit={this.handleSearch}
-              onClear={this.clearImageGallery}
-              resetPage={page}
-              resetGallery={images}/>
-            <ImageGallery
-              images={images}
-              showModal={this.showModal} />
-        {images.length > 0 && <Button onClick={this.onLoadMore} />}
+        <Searchbar
+          onSubmit={this.handleFormSubmit}
+          resetPage={page}
+          resetGallery={images} />
+        
+        {isLoading && <Loader />}
+        {error && <div>{error.message}</div>}
+        {images.length > 0 ? <ImageGallery
+          images={images}
+          showModal={this.showModal} /> : <h1>Enter something</h1>}
+        {(images.length > 0 || isLoading) && <Button onClick={this.onLoadMore} />}
         {isShowModal && <Modal modalImg={modalImg} onClose={this.closeModal} />}
       </div>
-      )
-    }    
-  };
+    )
+    
+  }
 };
 
 export default App;
