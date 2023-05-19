@@ -66,12 +66,16 @@ class App extends Component {
   };
 
   render() {
-    const { images, isShowModal, modalImg, error, status } = this.state;
+    const { images, page, isShowModal, modalImg, error, status } = this.state;
 
     if (status === 'idle') {
       return (
         <>
-          <Searchbar onSubmit={this.handleSearch} onClear={this.clearImageGallery} />
+          <Searchbar
+            onSubmit={this.handleSearch}
+            onClear={this.clearImageGallery}
+            resetPage={page}
+            resetGallery={images} />
           <h1>Enter something</h1>
         </>
       )      
@@ -80,7 +84,11 @@ class App extends Component {
     if (status === 'pending') {
       return (
         <>
-        <Searchbar onSubmit={this.handleSearch} onClear={this.clearImageGallery} />
+          <Searchbar
+            onSubmit={this.handleSearch}
+            onClear={this.clearImageGallery}
+            resetPage={page}
+            resetGallery={images}/>
         <Loader />
         </>
       )
@@ -93,8 +101,14 @@ class App extends Component {
     if (status === 'resolved') {
         return (
       <div className={css.app}>
-        <Searchbar onSubmit={this.handleSearch} onClear={this.clearImageGallery} />
-        <ImageGallery images={images} showModal={this.showModal} />
+            <Searchbar
+              onSubmit={this.handleSearch}
+              onClear={this.clearImageGallery}
+              resetPage={page}
+              resetGallery={images}/>
+            <ImageGallery
+              images={images}
+              showModal={this.showModal} />
         {images.length > 0 && <Button onClick={this.onLoadMore} />}
         {isShowModal && <Modal modalImg={modalImg} onClose={this.closeModal} />}
       </div>
