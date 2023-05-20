@@ -78,13 +78,12 @@ class App extends Component {
           onSubmit={this.handleFormSubmit}
           resetPage={page}
           resetGallery={images} />
-        
-        {isLoading && <Loader />}
         {error && <div>{error.message}</div>}
         {images.length > 0 ? <ImageGallery
           images={images}
           showModal={this.showModal} /> : <h1>Enter something</h1>}
-        {(images.length > 0 || isLoading) && <Button onClick={this.onLoadMore} />}
+        {isLoading && <Loader />}
+        {(images.length > 0 ) && <Button onClick={this.onLoadMore} />}
         {isShowModal && <Modal modalImg={modalImg} onClose={this.closeModal} />}
       </div>
     )
